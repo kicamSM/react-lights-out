@@ -29,6 +29,7 @@ import "./Board.css";
 
 function Board({ nrows, ncols, chanceLightStartsOn=0.25 }) {
   const [board, setBoard] = useState(createBoard());
+  // ! this is how we have aacecss to the arrayBoard in the flip cells around 
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
@@ -47,6 +48,7 @@ function Board({ nrows, ncols, chanceLightStartsOn=0.25 }) {
     return initialBoard;
   }
 
+  
   function hasWon() {
     // TODO: check the board in state to determine whether the player has won.
     return board.every(row => row.every(cell => cell === false));
@@ -56,15 +58,20 @@ function Board({ nrows, ncols, chanceLightStartsOn=0.25 }) {
 
   function flipCellsAround(coord) {
     console.log('coord:', coord)
+
     // Here the board is in state. We are setting the board with a copy of the old board. 
-    setBoard(oldBoard => {
+    console.log("board:", board)
+    // ! how do we know what the old board is here? It is the Board Array. 
+    setBoard(arrayBoard => { console.log("arrayBoard:", arrayBoard)
       const [y, x] = coord.split("-").map(Number);
       // setting the coordinates of the board and getting the coordinates as numbers 
-      console.log('x:', x)
-      console.log('y:', y)
+      // !note this line is the line that connects the arrayBoard and the displayed board. The displayed board has coord which we to setBoard. We taken those coor and we can use them in the arrayBoard to flip those cells. 
 
-      const flipCell = (y, x, boardCopy) => {
+
+
+      const flipCell = (y, x, boardCopy) => { 
         // if this coord is actually on board, flip it
+        console.log("boardCopy[0][1]:", boardCopy[0][1])
 
         if (x >= 0 && x < ncols && y >= 0 && y < nrows) {
           boardCopy[y][x] = !boardCopy[y][x];
@@ -73,7 +80,8 @@ function Board({ nrows, ncols, chanceLightStartsOn=0.25 }) {
       };
 
      // TODO: Make a (deep) copy of the oldBoard
-      const boardCopy = oldBoard.map(row => [...row]);
+      const boardCopy = arrayBoard.map(row => [...row]);
+      // !Here we are defining boardCopy but we are using boardCopy above
 
        // TODO: in the copy, flip this cell and the cells around it
       flipCell(y, x, boardCopy); 
@@ -92,7 +100,6 @@ function Board({ nrows, ncols, chanceLightStartsOn=0.25 }) {
       // TODO: return the copy
     });
   }
-
   // if the game is won, just show a winning msg & render nothing else
 
   if (hasWon()) {
